@@ -84,69 +84,104 @@ import styles from './app.module.css'
 // }
 
 //! 2). Создание одного состояния с объектом для всех полей (оптимальный вариант)
-const initialState = {
-	email: '',
-	login: '',
-	password: '',
-}
+// const initialState = {
+// 	email: '',
+// 	login: '',
+// 	password: '',
+// }
 
-const useStore = () => {
-	const [state, setState] = useState(initialState)
+// const useStore = () => {
+// 	const [state, setState] = useState(initialState)
 
-	return {
-		getState: () => state,
-		upDateState: (fieldName, newValue) => {
-			setState({ ...state, [fieldName]: newValue })
-		},
-		resetState: () => {
-			setState(initialState)
-		},
-	}
-}
+// 	return {
+// 		getState: () => state,
+// 		upDateState: (fieldName, newValue) => {
+// 			setState({ ...state, [fieldName]: newValue })
+// 		},
+// 		resetState: () => {
+// 			setState(initialState)
+// 		},
+// 	}
+// }
 
-const sendData = (formData) => {
-	console.log(formData)
-}
+// const sendData = (formData) => {
+// 	console.log(formData)
+// }
 
+// export const App = () => {
+// 	const { getState, upDateState, resetState } = useStore()
+
+// 	const onSubmit = (e) => {
+// 		e.preventDefault()
+// 		sendData(getState())
+// 	}
+
+// 	const { email, login, password } = getState()
+
+// 	const onChange = ({ target }) => upDateState(target.name, target.value)
+
+// 	return (
+// 		<div className={styles.app}>
+// 			<form onSubmit={onSubmit}>
+// 				<input
+// 					type="email"
+// 					name="email"
+// 					value={email}
+// 					placeholder="Почта"
+// 					onChange={onChange}
+// 				/>
+// 				<input
+// 					type="text"
+// 					name="login"
+// 					value={login}
+// 					placeholder="Логин"
+// 					onChange={onChange}
+// 				/>
+// 				<input
+// 					type="password"
+// 					name="password"
+// 					value={password}
+// 					placeholder="Пароль"
+// 					onChange={onChange}
+// 				/>
+// 				<button type="reset" onClick={resetState}>Сброс</button>
+// 				<button type="submit">Отправить</button>
+// 			</form>
+// 		</div>
+// 	)
+// }
+
+//! Создание контроллируемого (с атрибутами value и onChange) одиночного селекта и мульти селекта
 export const App = () => {
-	const { getState, upDateState, resetState } = useStore()
+	const [selectedProduct, setSelectedProduct] = useState('tv')
+	const [selectedColors, setSelectedColors] = useState(['black', 'silver'])
 
-	const onSubmit = (e) => {
-		e.preventDefault()
-		sendData(getState())
+	const onSelectedProductChange = ({ target }) =>
+		setSelectedProduct(target.value)
+
+	const onSelectedColorsChange = ({ target }) => {
+		const newSelectedColors = [...target.selectedOptions].map(
+			(selectedTarget) => selectedTarget.value
+		)
+		setSelectedColors(newSelectedColors)
 	}
-
-	const { email, login, password } = getState()
-
-	const onChange = ({ target }) => upDateState(target.name, target.value)
 
 	return (
 		<div className={styles.app}>
-			<form onSubmit={onSubmit}>
-				<input
-					type="email"
-					name="email"
-					value={email}
-					placeholder="Почта"
-					onChange={onChange}
-				/>
-				<input
-					type="text"
-					name="login"
-					value={login}
-					placeholder="Логин"
-					onChange={onChange}
-				/>
-				<input
-					type="password"
-					name="password"
-					value={password}
-					placeholder="Пароль"
-					onChange={onChange}
-				/>
-				<button type="reset" onClick={resetState}>Сброс</button>
-				<button type="submit">Отправить</button>
-			</form>
+			<select value={selectedProduct} onChange={onSelectedProductChange}>
+				<option value="tv">Телевизор</option>
+				<option value="smartphone">Смартфон</option>
+				<option value="laptop">Ноутбук</option>
+			</select>
+			<select
+				multiple={true}
+				value={selectedColors}
+				onChange={onSelectedColorsChange}
+			>
+				<option value="black">Чёрный</option>
+				<option value="silver">Серебристый</option>
+				<option value="white">Белый</option>
+			</select>
 		</div>
 	)
 }
