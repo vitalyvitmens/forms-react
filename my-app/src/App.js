@@ -191,27 +191,82 @@ import styles from './app.module.css'
 //! установи: npm i --save react-select
 //! импортируй: import Select from 'react-select'
 //! https://react-select.com/props#api
-const productOptions = [
-	{ value: 'tv', label: 'Телевизор' },
-	{ value: 'smartphone', label: 'Смартфон' },
-	{ value: 'laptop', label: 'Ноутбук' },
-]
+// const productOptions = [
+// 	{ value: 'tv', label: 'Телевизор' },
+// 	{ value: 'smartphone', label: 'Смартфон' },
+// 	{ value: 'laptop', label: 'Ноутбук' },
+// ]
 
-const colorOptions = [
-	{ value: 'black', label: 'Чёрный' },
-	{ value: 'silver', label: 'Серебристый' },
-	{ value: 'white', label: 'Белый' },
-]
+// const colorOptions = [
+// 	{ value: 'black', label: 'Чёрный' },
+// 	{ value: 'silver', label: 'Серебристый' },
+// 	{ value: 'white', label: 'Белый' },
+// ]
+
+// export const App = () => {
+// 	return (
+// 		<div className={styles.app}>
+// 			<Select options={productOptions} defaultValue={productOptions[0]} />
+// 			<Select
+// 				isMulti
+// 				options={colorOptions}
+// 				defaultValue={[colorOptions[0], colorOptions[1]]}
+// 			/>
+// 		</div>
+// 	)
+// }
+
+//! Валидация для поля Логин
+//! https://regex101.com/
 
 export const App = () => {
+	const [login, setLogin] = useState('')
+	const [loginError, setLoginError] = useState(null)
+
+	const onLoginChange = ({ target }) => {
+		setLogin(target.value)
+
+		let error = null
+    // https://regex101.com/
+		if (!/^[\w_]*$/.test(target.value)) {
+			error =
+				'Неверный логин. Допустимые символы: буквы, цифры и нижнее подчеркивание.'
+		} else if (target.value.length > 20) {
+			error = 'Неверный логин. Допустимое количество символов не более 20.'
+		}
+
+		setLoginError(error)
+	}
+
+	const onLoginBlur = () => {
+		if (login.length < 3) {
+			setLoginError(
+				'Неверный логин. Допустимое количество символов не менее 3.'
+			)
+		}
+	}
+
+	const onSubmit = (e) => {
+		e.preventDefault()
+		console.log(login)
+	}
+
 	return (
 		<div className={styles.app}>
-			<Select options={productOptions} defaultValue={productOptions[0]} />
-			<Select
-				isMulti
-				options={colorOptions}
-				defaultValue={[colorOptions[0], colorOptions[1]]}
-			/>
+			<form onSubmit={onSubmit}>
+				{loginError && <div className={styles.errorLabel}>{loginError}</div>}
+				<input
+					name="Login"
+					type="text"
+					value={login}
+					placeholder="Логин"
+					onChange={onLoginChange}
+          onBlur={onLoginBlur}
+				></input>
+				<button type="submit" disabled={loginError || !login.length}>
+					Отправить
+				</button>
+			</form>
 		</div>
 	)
 }

@@ -9,3 +9,14 @@
 input[type='checkbox']:checked + .content {
 	display: block;
 }
+
+.errorLabel {
+	padding: 10px;
+  margin: auto;
+	color: red;
+	font-size: 1.25rem;
+	font-weight: bold;
+	background-color: yellow;
+	border: 5px solid black;
+	border-radius: 15px;
+}
