@@ -263,7 +263,7 @@ import styles from './app.module.css'
 // 					onChange={onLoginChange}
 //           onBlur={onLoginBlur}
 // 				></input>
-// 				<button type="submit" disabled={loginError || !login.length}>
+// 				<button type="submit" disabled={!!loginError}>
 // 					Отправить
 // 				</button>
 // 			</form>
@@ -274,6 +274,7 @@ import styles from './app.module.css'
 //! Валидация при помощи специального пакета yup
 //! установи: npm i yup
 //! импортируй: import * as yup from 'yup'
+//! https://github.com/jquense/yup#yup
 const loginChangeScheme = yup
 	.string()
 	.matches(
@@ -334,7 +335,7 @@ export const App = () => {
 					onChange={onLoginChange}
 					onBlur={onLoginBlur}
 				></input>
-				<button type="submit" disabled={loginError || !login.length}>
+				<button type="submit" disabled={!!loginError}>
 					Отправить
 				</button>
 			</form>
