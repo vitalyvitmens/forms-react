@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Select from 'react-select'
+import * as yup from 'yup'
 import styles from './app.module.css'
 // import logo from './logo.svg'
 // import PropTypes from 'prop-types'
@@ -218,6 +219,85 @@ import styles from './app.module.css'
 
 //! Валидация для поля Логин
 //! https://regex101.com/
+// export const App = () => {
+// 	const [login, setLogin] = useState('')
+// 	const [loginError, setLoginError] = useState(null)
+
+// 	const onLoginChange = ({ target }) => {
+// 		setLogin(target.value)
+
+// 		let error = null
+//     // https://regex101.com/
+// 		if (!/^[\w_]*$/.test(target.value)) {
+// 			error =
+// 				'Неверный логин. Допустимые символы: буквы, цифры и нижнее подчеркивание.'
+// 		} else if (target.value.length > 20) {
+// 			error = 'Неверный логин. Допустимое количество символов не более 20.'
+// 		}
+
+// 		setLoginError(error)
+// 	}
+
+// 	const onLoginBlur = () => {
+// 		if (login.length < 3) {
+// 			setLoginError(
+// 				'Неверный логин. Допустимое количество символов не менее 3.'
+// 			)
+// 		}
+// 	}
+
+// 	const onSubmit = (e) => {
+// 		e.preventDefault()
+// 		console.log(login)
+// 	}
+
+// 	return (
+// 		<div className={styles.app}>
+// 			<form onSubmit={onSubmit}>
+// 				{loginError && <div className={styles.errorLabel}>{loginError}</div>}
+// 				<input
+// 					name="Login"
+// 					type="text"
+// 					value={login}
+// 					placeholder="Логин"
+// 					onChange={onLoginChange}
+//           onBlur={onLoginBlur}
+// 				></input>
+// 				<button type="submit" disabled={loginError || !login.length}>
+// 					Отправить
+// 				</button>
+// 			</form>
+// 		</div>
+// 	)
+// }
+
+//! Валидация при помощи специального пакета yup
+//! установи: npm i yup
+//! импортируй: import * as yup from 'yup'
+const loginChangeScheme = yup
+	.string()
+	.matches(
+		/^[\w_]*$/,
+		'Неверный логин. Допустимые символы: буквы, цифры и нижнее подчеркивание.'
+	)
+	.max(20, 'Неверный логин. Допустимое количество символов не более 20.')
+
+const loginBlurScheme = yup
+	.string()
+	.min(3, 'Неверный логин. Допустимое количество символов не менее 3.')
+
+const validateAndGetErrorMessage = (scheme, value) => {
+	let errorMessage = null
+
+	try {
+		scheme.validateSync(value, { abortEarly: false })
+	} catch ({ errors }) {
+		// errorMessage = errors[0]
+		errorMessage = errors.join('\n')
+	}
+
+	return errorMessage
+}
 
 export const App = () => {
 	const [login, setLogin] = useState('')
@@ -226,24 +306,15 @@ export const App = () => {
 	const onLoginChange = ({ target }) => {
 		setLogin(target.value)
 
-		let error = null
-    // https://regex101.com/
-		if (!/^[\w_]*$/.test(target.value)) {
-			error =
-				'Неверный логин. Допустимые символы: буквы, цифры и нижнее подчеркивание.'
-		} else if (target.value.length > 20) {
-			error = 'Неверный логин. Допустимое количество символов не более 20.'
-		}
+		const error = validateAndGetErrorMessage(loginChangeScheme, target.value)
 
 		setLoginError(error)
 	}
 
 	const onLoginBlur = () => {
-		if (login.length < 3) {
-			setLoginError(
-				'Неверный логин. Допустимое количество символов не менее 3.'
-			)
-		}
+		const error = validateAndGetErrorMessage(loginBlurScheme, login)
+
+		setLoginError(error)
 	}
 
 	const onSubmit = (e) => {
@@ -261,7 +332,7 @@ export const App = () => {
 					value={login}
 					placeholder="Логин"
 					onChange={onLoginChange}
-          onBlur={onLoginBlur}
+					onBlur={onLoginBlur}
 				></input>
 				<button type="submit" disabled={loginError || !login.length}>
 					Отправить
