@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Select from 'react-select'
 import * as yup from 'yup'
 import styles from './app.module.css'
@@ -275,70 +275,131 @@ import styles from './app.module.css'
 //! установи: npm i yup
 //! импортируй: import * as yup from 'yup'
 //! https://github.com/jquense/yup#yup
-const loginChangeScheme = yup
-	.string()
-	.matches(
-		/^[\w_]*$/,
-		'Неверный логин. Допустимые символы: буквы, цифры и нижнее подчеркивание.'
-	)
-	.max(20, 'Неверный логин. Допустимое количество символов не более 20.')
+//! useRef 1й пример (перемещение фокуса с инпута на кнопку при длине символов === 20)
+// const loginChangeScheme = yup
+// 	.string()
+// 	.matches(
+// 		/^[\w_]*$/,
+// 		'Неверный логин. Допустимые символы: буквы, цифры и нижнее подчеркивание.'
+// 	)
+// 	.max(20, 'Неверный логин. Допустимое количество символов не более 20.')
 
-const loginBlurScheme = yup
-	.string()
-	.min(3, 'Неверный логин. Допустимое количество символов не менее 3.')
+// const loginBlurScheme = yup
+// 	.string()
+// 	.min(3, 'Неверный логин. Допустимое количество символов не менее 3.')
 
-const validateAndGetErrorMessage = (scheme, value) => {
-	let errorMessage = null
+// const validateAndGetErrorMessage = (scheme, value) => {
+// 	let errorMessage = null
 
-	try {
-		scheme.validateSync(value, { abortEarly: false })
-	} catch ({ errors }) {
-		// errorMessage = errors[0]
-		errorMessage = errors.join('\n')
-	}
+// 	try {
+// 		scheme.validateSync(value, { abortEarly: false })
+// 	} catch ({ errors }) {
+// 		// errorMessage = errors[0]
+// 		errorMessage = errors.join('\n')
+// 	}
 
-	return errorMessage
-}
+// 	return errorMessage
+// }
 
+// export const App = () => {
+// 	const [login, setLogin] = useState('')
+// 	const [loginError, setLoginError] = useState(null)
+// 	const submitButtonRef = useRef(null)
+
+// 	const onLoginChange = ({ target }) => {
+// 		setLogin(target.value)
+
+// 		const error = validateAndGetErrorMessage(loginChangeScheme, target.value)
+
+// 		setLoginError(error)
+
+// 		if (target.value.length === 20) {
+// 			submitButtonRef.current.focus()
+// 		}
+// 	}
+
+// 	const onLoginBlur = () => {
+// 		const error = validateAndGetErrorMessage(loginBlurScheme, login)
+
+// 		setLoginError(error)
+// 	}
+
+// 	const onSubmit = (e) => {
+// 		e.preventDefault()
+// 		console.log(login)
+// 	}
+
+// 	return (
+// 		<div className={styles.app}>
+// 			<form onSubmit={onSubmit}>
+// 				{loginError && <div className={styles.errorLabel}>{loginError}</div>}
+// 				<input
+// 					name="Login"
+// 					type="text"
+// 					value={login}
+// 					placeholder="Логин"
+// 					onChange={onLoginChange}
+// 					onBlur={onLoginBlur}
+// 				></input>
+// 				<button ref={submitButtonRef} type="submit" disabled={!!loginError}>
+// 					Отправить
+// 				</button>
+// 			</form>
+// 		</div>
+// 	)
+// }
+
+//! useRef  2й пример (изменение значения хука useRef не вызывает рендер компонента, в отличии от изменения значения хука useState)
+// export const App = () => {
+// 	const [stateCounter, setStateCounter] = useState(0)
+
+// 	const incrementStateCounter = () => {
+// 		setStateCounter(stateCounter + 1)
+// 		console.log('stateCounter:', stateCounter + 1)
+// 	}
+
+// 	const refCounter = useRef(0)
+
+// 	const incrementRefCounter = () => {
+// 		refCounter.current += 1
+// 		console.log('refCounter:', refCounter.current)
+// 	}
+
+// 	return (
+// 		<div className={styles.app}>
+// 			<p>refCounter: {refCounter.current}</p>
+// 			<button onClick={incrementRefCounter}>Прибавить: refCounter</button>
+// 			<p>stateCounter: {stateCounter}</p>
+// 			<button onClick={incrementStateCounter}>Прибавить: stateCounter</button>
+// 		</div>
+// 	)
+// }
+
+//! useRef  2й пример (изменение значения хука useRef не вызывает рендер компонента, в отличии от изменения значения хука useState)
+//! установи: npm i react-hook-form
+//! импортируй: import * as yup from 'yup'
+//! npm i react-hook-form
 export const App = () => {
-	const [login, setLogin] = useState('')
-	const [loginError, setLoginError] = useState(null)
+	const [stateCounter, setStateCounter] = useState(0)
 
-	const onLoginChange = ({ target }) => {
-		setLogin(target.value)
-
-		const error = validateAndGetErrorMessage(loginChangeScheme, target.value)
-
-		setLoginError(error)
+	const incrementStateCounter = () => {
+		setStateCounter(stateCounter + 1)
+		console.log('stateCounter:', stateCounter + 1)
 	}
 
-	const onLoginBlur = () => {
-		const error = validateAndGetErrorMessage(loginBlurScheme, login)
+	const refCounter = useRef(0)
 
-		setLoginError(error)
-	}
-
-	const onSubmit = (e) => {
-		e.preventDefault()
-		console.log(login)
+	const incrementRefCounter = () => {
+		refCounter.current += 1
+		console.log('refCounter:', refCounter.current)
 	}
 
 	return (
 		<div className={styles.app}>
-			<form onSubmit={onSubmit}>
-				{loginError && <div className={styles.errorLabel}>{loginError}</div>}
-				<input
-					name="Login"
-					type="text"
-					value={login}
-					placeholder="Логин"
-					onChange={onLoginChange}
-					onBlur={onLoginBlur}
-				></input>
-				<button type="submit" disabled={!!loginError}>
-					Отправить
-				</button>
-			</form>
+			<p>refCounter: {refCounter.current}</p>
+			<button onClick={incrementRefCounter}>Прибавить: refCounter</button>
+			<p>stateCounter: {stateCounter}</p>
+			<button onClick={incrementStateCounter}>Прибавить: stateCounter</button>
 		</div>
 	)
 }

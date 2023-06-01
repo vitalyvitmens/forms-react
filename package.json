@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "prop-types": "^15.8.1",
+    "react-hook-form": "^7.44.2",
     "react-select": "^5.7.3",
     "yup": "^1.2.0"
   }
