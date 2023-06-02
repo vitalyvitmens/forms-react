@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react'
 import Select from 'react-select'
 import * as yup from 'yup'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
 import styles from './app.module.css'
 // import logo from './logo.svg'
 // import PropTypes from 'prop-types'
@@ -375,31 +377,101 @@ import styles from './app.module.css'
 // 	)
 // }
 
-//! useRef  2й пример (изменение значения хука useRef не вызывает рендер компонента, в отличии от изменения значения хука useState)
+//! React Hook Form
 //! установи: npm i react-hook-form
-//! импортируй: import * as yup from 'yup'
-//! npm i react-hook-form
+//! импортируй: import { useForm } from 'react-hook-form'
+//! https://react-hook-form.com/get-started
+// export const App = () => {
+// 	const {
+// 		register,
+// 		handleSubmit,
+// 		formState: { errors },
+// 	} = useForm({
+// 		defaultValues: {
+// 			login: '',
+// 		},
+// 	})
+
+// 	const loginProps = {
+// 		minLength: {
+// 			value: 3,
+// 			message: 'Неверный логин. Допустимое количество символов не менее 3.',
+// 		},
+// 		maxLength: {
+// 			value: 20,
+// 			message: 'Неверный логин. Допустимое количество символов не более 20.',
+// 		},
+// 		pattern: {
+// 			value: /^[\w_]*$/,
+// 			message:
+// 				'Неверный логин. Допустимые символы: буквы, цифры и нижнее подчеркивание.',
+// 		},
+// 	}
+
+// 	const loginError = errors.login?.message
+
+// 	const sendFormData = (formData) => {
+// 		console.log(formData)
+// 	}
+
+// 	return (
+// 		<div className={styles.app}>
+// 			<form onSubmit={handleSubmit(sendFormData)}>
+// 				{loginError && <div className={styles.errorLabel}>{loginError}</div>}
+// 				<input name="login" type="text" {...register('login', loginProps)} />
+// 				<button type="submit" disabled={!!loginError}>
+// 					Отправить
+// 				</button>
+// 			</form>
+// 		</div>
+// 	)
+// }
+
+//! React Hook Form вместе с Yup
+//! установи: npm i react-hook-form
+//! установи дополнительно: npm install @hookform/resolvers yup
+//! import * as yup from 'yup'
+//! import { useForm } from 'react-hook-form'
+//! import { yupResolver } from '@hookform/resolvers/yup'
+//! https://react-hook-form.com/get-started
+const fieldScheme = yup.object().shape({
+	login: yup
+		.string()
+		.matches(
+			/^[\w_]*$/,
+			'Неверный логин. Допустимые символы: буквы, цифры и нижнее подчеркивание.'
+		)
+		.max(20, 'Неверный логин. Допустимое количество символов не более 20.')
+		.min(3, 'Неверный логин. Допустимое количество символов не менее 3.'),
+})
+
 export const App = () => {
-	const [stateCounter, setStateCounter] = useState(0)
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm({
+		defaultValues: {
+			login: '',
+		},
+		resolver: yupResolver(fieldScheme),
+	})
 
-	const incrementStateCounter = () => {
-		setStateCounter(stateCounter + 1)
-		console.log('stateCounter:', stateCounter + 1)
-	}
+	const loginError = errors.login?.message
 
-	const refCounter = useRef(0)
-
-	const incrementRefCounter = () => {
-		refCounter.current += 1
-		console.log('refCounter:', refCounter.current)
+	const sendFormData = (formData) => {
+		console.log(formData)
 	}
 
 	return (
 		<div className={styles.app}>
-			<p>refCounter: {refCounter.current}</p>
-			<button onClick={incrementRefCounter}>Прибавить: refCounter</button>
-			<p>stateCounter: {stateCounter}</p>
-			<button onClick={incrementStateCounter}>Прибавить: stateCounter</button>
+			<form onSubmit={handleSubmit(sendFormData)}>
+				{loginError && <div className={styles.errorLabel}>{loginError}</div>}
+				<input name="login" type="text" {...register('login')} />
+				<button type="submit" disabled={!!loginError}>
+					Отправить
+				</button>
+			</form>
 		</div>
 	)
 }
